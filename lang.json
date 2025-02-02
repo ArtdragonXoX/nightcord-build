@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Java (OpenJDK 21.0.2)",
+        "source_file": "Main.java",
+        "compile_cmd": "/usr/lib/jvm/jdk-21.0.2/bin/javac -Xlint:none %s Main.java",
+        "run_cmd": "/usr/lib/jvm/jdk-21.0.2/bin/java Main"
+    },
+    {
+        "name": "Java (JDK 1.8.0_202)",
+        "source_file": "Main.java",
+        "compile_cmd": "/usr/lib/jvm/jdk1.8.0_202/bin/javac -Xlint:none %s Main.java",
+        "run_cmd": "/usr/lib/jvm/jdk1.8.0_202/bin/java Main"
+    },
+    {
+        "name": "C (GCC 7.4.0)",
+        "source_file": "main.c",
+        "compile_cmd": "/usr/bin/gcc-7 -std=c99 -O2 -Wall -lm %s main.c -o main",
+        "run_cmd": "./main"
+    },
+    {
+        "name": "C++ (GCC 7.4.0)",
+        "source_file": "main.cpp",
+        "compile_cmd": "/usr/bin/g++-7 -std=c++14 -O2 -Wall -lm %s main.cpp -o main",
+        "run_cmd": "./main"
+    },
+    {
+        "name": "C (GCC 8.3.0)",
+        "source_file": "main.c",
+        "compile_cmd": "/usr/bin/gcc-8 -std=c99 -O2 -Wall -lm %s main.c -o main",
+        "run_cmd": "./main"
+    },
+    {
+        "name": "C++ (GCC 8.3.0)",
+        "source_file": "main.cpp",
+        "compile_cmd": "/usr/bin/g++-8 -std=c++14 -O2 -Wall -lm %s main.cpp -o main",
+        "run_cmd": "./main"
+    },
+    {
+        "name": "C (GCC 9.2.0)",
+        "source_file": "main.c",
+        "compile_cmd": "/usr/bin/gcc-9 -std=c99 -O2 -Wall -lm %s main.c -o main",
+        "run_cmd": "./main"
+    },
+    {
+        "name": "C++ (GCC 9.2.0)",
+        "source_file": "main.cpp",
+        "compile_cmd": "/usr/bin/g++-9 -std=c++14 -O2 -Wall -lm %s main.cpp -o main",
+        "run_cmd": "./main"
+    },
+    {
+        "name": "Python (3.8.1)",
+        "source_file": "main.py",
+        "compile_cmd": "",
+        "run_cmd": "/usr/local/python3.8/bin/python3 main.py"
+    },
+    {
+        "name": "Python (2.7.17)",
+        "source_file": "main.py",
+        "compile_cmd": "",
+        "run_cmd": "/usr/local/python2.7/bin/python2 main.py"
+    }
+]
