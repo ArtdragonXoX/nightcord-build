@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
 	Long: `Automatically generates Dockerfile by concatenating 
 all .lang files in the current directory`,
 	Run: func(cmd *cobra.Command, args []string) {
-		langFiles, err := filepath.Glob("*.lang")
+		langFiles, err := filepath.Glob("langs/*.lang")
 		if err != nil {
 			fmt.Printf("查找.lang文件失败: %v\n", err)
 			return
@@ -23,8 +23,13 @@ all .lang files in the current directory`,
 
 		var dockerContent strings.Builder
 		dockerContent.WriteString("# Auto-generated Dockerfile - DO NOT EDIT\n\n")
-		dockerContent.WriteString("FROM alpine:latest\n\n")
 
+		preFile, err := os.ReadFile("dockerfile.pre")
+		if err != nil {
+			fmt.Printf("读取文件 dockerfile.pre 失败: %v\n", err)
+		} else {
+			dockerContent.Write(preFile)
+		}
 		for _, langFile := range langFiles {
 			content, err := os.ReadFile(langFile)
 			if err != nil {
@@ -35,6 +40,13 @@ all .lang files in the current directory`,
 			dockerContent.WriteString(fmt.Sprintf("# ==== %s ====\n", langFile))
 			dockerContent.Write(content)
 			dockerContent.WriteString("\n\n")
+		}
+
+		postFile, err := os.ReadFile("dockerfile.post")
+		if err != nil {
+			fmt.Printf("读取文件 dockerfile.post 失败: %v\n", err)
+		} else {
+			dockerContent.Write(postFile)
 		}
 
 		err = os.WriteFile("Dockerfile", []byte(dockerContent.String()), 0644)

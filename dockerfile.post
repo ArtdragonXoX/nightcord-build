@@ -1,0 +1,26 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ENV TZ=Asia/Shanghai
+
+# 1. 安装 locales 包并生成中文语言环境
+RUN apt-get update && \
+    apt-get install -y locales && \
+    sed -i '/zh_CN.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen zh_CN.UTF-8
+
+# 2. 设置默认语言环境为中文 UTF-8
+ENV LANG zh_CN.UTF-8
+ENV LC_ALL zh_CN.UTF-8
+
+RUN apt-get install -y tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone
+
+COPY --from=base /usr/local/python3.8/bin/python3 /usr/local/python3.8/bin/python3
+COPY --from=base /usr/local/python2.7/bin/python /usr/local/python2.7/bin/python
+COPY --from=base /usr/bin/g++-7 /usr/bin/g++-7
+COPY --from=base /usr/bin/g++-8 /usr/bin/g++-8
+COPY --from=base /usr/lib/jvm/jdk-21.0.2 /usr/lib/jvm/jdk-21.0.2
+COPY --from=base /usr/lib/jvm/jdk1.8.0_202 /usr/lib/jvm/jdk1.8.0_202

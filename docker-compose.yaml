@@ -1,0 +1,10 @@
+version: '3'
+services:
+    stuoj:
+        container_name: nightcord
+        image: nightcord
+        restart: no
+        volumes:
+            - ./config.yaml:/app/config.yaml
+        ports:
+            - 14514:14514

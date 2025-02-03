@@ -7,8 +7,8 @@ RUN mkdir -p /usr/local/python3.8 /usr/local/python2.7
 RUN wget https://www.python.org/ftp/python/3.8.1/Python-3.8.1.tar.xz -P /tmp
 
 # 解压并编译安装
-RUN tar -xf /tmp/Python-3.8.1.tar.xz -C /tmp
-RUN cd /tmp/Python-3.8.1 && \
+RUN set -ex; tar -xf /tmp/Python-3.8.1.tar.xz -C /tmp
+RUN set -ex; cd /tmp/Python-3.8.1 && \
     ./configure \
     --prefix=/usr/local/python3.8 \
     --enable-optimizations \
@@ -20,13 +20,13 @@ RUN cd /tmp/Python-3.8.1 && \
 # 安装 Python 2.7.17
 # ----------------------------
 # 下载 Python 2.7.17 源码
-RUN wget https://www.python.org/ftp/python/2.7.17/Python-2.7.17.tar.xz -P /tmp
+RUN set -ex; wget https://www.python.org/ftp/python/2.7.17/Python-2.7.17.tar.xz -P /tmp
 
 # 解压并编译安装（需修复 musl libc 兼容性）
-RUN tar -xf /tmp/Python-2.7.17.tar.xz -C /tmp
+RUN set -ex; tar -xf /tmp/Python-2.7.17.tar.xz -C /tmp
 # 应用补丁修复 Alpine/musl 兼容性问题
-RUN sed -i 's/\(#ifdef HAVE_GETENTROPY\)/\1\n#undef HAVE_GETENTROPY/' /tmp/Python-2.7.17/Modules/_randommodule.c
-RUN cd /tmp/Python-2.7.17 && \
+RUN set -ex; sed -i 's/\(#ifdef HAVE_GETENTROPY\)/\1\n#undef HAVE_GETENTROPY/' /tmp/Python-2.7.17/Modules/_randommodule.c
+RUN set -ex; cd /tmp/Python-2.7.17 && \
     ./configure \
     --prefix=/usr/local/python2.7 \
     --enable-unicode=ucs4 \
