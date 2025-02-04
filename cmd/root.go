@@ -13,9 +13,8 @@ import (
 )
 
 var (
-	logFile   string
-	no_cache  bool
-	timeStamp bool
+	log      bool
+	no_cache bool
 )
 
 var rootCmd = &cobra.Command{
@@ -38,23 +37,7 @@ var buildCmd = &cobra.Command{
 	Short: "Build Docker image",
 	Long:  `Build Docker image with logging and cache optimization`,
 	Run: func(cmd *cobra.Command, args []string) {
-		startTime := time.Now().Format("20060102-150405")
-		if logFile == "" {
-			if timeStamp {
-				logFile = fmt.Sprintf("build-%s.log", startTime)
-			}
-		}
-
-		logWriter, err := os.Create(logFile)
-		if err != nil {
-			fmt.Printf("创建日志文件失败: %v\n", err)
-			return
-		}
-		defer logWriter.Close()
-
-		multiWriter := io.MultiWriter(os.Stdout, logWriter)
-		fmt.Fprintf(multiWriter, "=== 开始构建 [%s] ===\n", startTime)
-		buildImage(multiWriter)
+		buildImage()
 	},
 }
 
@@ -107,17 +90,24 @@ func generateDockerfile(w io.Writer) {
 	fmt.Fprintln(w, "✅ Dockerfile生成成功")
 }
 
-func buildImage(w io.Writer) {
-	// 创建带时间戳的日志文件
-	logFileHandle, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Fprintf(w, "无法创建日志文件: %v\n", err)
-		return
-	}
-	defer logFileHandle.Close()
+func buildImage() {
+	var multiWriter io.Writer
+	multiWriter = io.MultiWriter(os.Stdout) // 默认输出到控制台
+	startTime := time.Now().Format("20060102-150405")
 
-	// 创建多路写入器
-	multiWriter := io.MultiWriter(w, logFileHandle)
+	if log {
+		logFile := fmt.Sprintf("build-%s.log", startTime)
+
+		logWriter, err := os.Create(logFile)
+		if err != nil {
+			fmt.Printf("创建日志文件失败: %v\n", err)
+			return
+		}
+		defer logWriter.Close()
+
+		multiWriter = io.MultiWriter(os.Stdout, logWriter) // 同时输出到控制台和日志文件
+	}
+	fmt.Fprintf(multiWriter, "=== 开始构建 [%s] ===\n", startTime)
 
 	// 执行docker build命令
 	cmdStr := "docker"
@@ -130,7 +120,7 @@ func buildImage(w io.Writer) {
 	cmd.Stdout = multiWriter
 	cmd.Stderr = multiWriter
 
-	startTime := time.Now().Format("2006-01-02 15:04:05")
+	startTime = time.Now().Format("2006-01-02 15:04:05")
 	fmt.Fprintf(multiWriter, "\n🚀 开始构建镜像 [%s]\n", startTime)
 	if err := cmd.Run(); err != nil {
 		fmt.Fprintf(multiWriter, "❌ 构建失败: %v\n", err)
@@ -145,8 +135,7 @@ func init() {
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(runCmd)
 
-	buildCmd.Flags().StringVarP(&logFile, "log", "l", "build.log", "日志文件路径 (默认: ./build.log)")
-	buildCmd.Flags().BoolVarP(&timeStamp, "timestamp", "t", false, "在日志文件名中添加时间戳")
+	buildCmd.Flags().BoolVarP(&log, "log", "l", false, "生成日志文件")
 	buildCmd.Flags().BoolVarP(&no_cache, "no-cache", "n", false, "不使用缓存构建镜像")
 
 }
