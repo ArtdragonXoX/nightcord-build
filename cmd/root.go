@@ -96,7 +96,11 @@ func buildImage() {
 	startTime := time.Now().Format("20060102-150405")
 
 	if log {
-		logFile := fmt.Sprintf("build-%s.log", startTime)
+		logFile := fmt.Sprintf("./logs/build-%s.log", startTime)
+		if err := os.MkdirAll("./logs", 0755); err != nil {
+			fmt.Printf("无法创建日志目录: %v\n", err)
+			return
+		}
 
 		logWriter, err := os.Create(logFile)
 		if err != nil {
