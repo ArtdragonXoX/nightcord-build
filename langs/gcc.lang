@@ -5,22 +5,12 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update
 
 RUN set -ex; apt-get install -y \
-    gcc-7 \
-    g++-7 \
-    gcc-8 \
-    g++-8 \
     gcc-9 \
     g++-9 \
     && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 80 \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 70 \
-    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90 \
-    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 80 \
-    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 70
+    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90 
 
 # 验证安装结果（包含版本信息和二进制位置）
 RUN set -ex; ls /usr/bin/gcc* && \
     ls /usr/bin/g++* && \
-    gcc-7 --version | head -n1 && \
-    gcc-8 --version | head -n1 && \
     gcc-9 --version | head -n1
