@@ -55,7 +55,7 @@ func BuildImage(log bool, no_cache bool) {
 		return
 	}
 	fmt.Fprintln(multiWriter, "🎉 镜像构建完成")
-	// 用buildStart计算实际构建耗时
+	// 用buildStart计算实际构建耗时，并精确到三位小数
 	duration := time.Since(buildStart)
-	fmt.Fprintf(multiWriter, "⏱️ 构建耗时: %s\n", duration.Round(time.Second))
+	fmt.Fprintf(multiWriter, "⏱️ 构建耗时: %.3fs\n", duration.Seconds())
 }
