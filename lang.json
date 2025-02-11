@@ -45,12 +45,12 @@
         "name": "Python (3.8.1)",
         "source_file": "main.py",
         "compile_cmd": "",
-        "run_cmd": "/usr/local/python3.8/bin/python3 main.py"
+        "run_cmd": "python3 main.py"
     },
     {
         "name": "Python (2.7.17)",
         "source_file": "main.py",
         "compile_cmd": "",
-        "run_cmd": "/usr/local/python2.7/bin/python2 main.py"
+        "run_cmd": "python2 main.py"
     }
 ]

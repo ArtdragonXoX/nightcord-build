@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS base
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -7,26 +7,17 @@ ENV TZ=Asia/Shanghai
 RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list && \
     sed -i "s@http://.*security.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list
 
-RUN apt-get update && \ 
-    apt-get install -y tzdata && \
+# 1. 安装 locales 包并生成中文语言环境
+RUN apt-get update && \
+    apt-get install -y locales \
+    wget && \
+    sed -i '/zh_CN.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen zh_CN.UTF-8
+
+# 2. 设置默认语言环境为中文 UTF-8
+ENV LANG zh_CN.UTF-8
+ENV LC_ALL zh_CN.UTF-8
+
+RUN apt-get install -y tzdata && \
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone
-
-RUN apt-get install -y \
-        make \
-        build-essential \
-        libssl-dev \
-        zlib1g-dev \
-        libbz2-dev \
-        libreadline-dev \
-        libsqlite3-dev \
-        libffi-dev \
-        wget \
-        curl \
-        llvm \
-        libncurses5-dev \
-        xz-utils \
-        tk-dev \
-        && rm -rf /var/lib/apt/lists/*
-
-        
