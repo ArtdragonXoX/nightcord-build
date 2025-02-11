@@ -42,13 +42,13 @@
         "run_cmd": "/usr/lib/jvm/jdk1.8.0_202/bin/java Main"
     },
     {
-        "name": "Python (3.8.1)",
+        "name": "Python3",
         "source_file": "main.py",
         "compile_cmd": "",
         "run_cmd": "python3 main.py"
     },
     {
-        "name": "Python (2.7.17)",
+        "name": "Python2",
         "source_file": "main.py",
         "compile_cmd": "",
         "run_cmd": "python2 main.py"
