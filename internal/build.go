@@ -46,12 +46,16 @@ func BuildImage(log bool, no_cache bool) {
 	cmd.Stdout = multiWriter
 	cmd.Stderr = multiWriter
 
-	startTime = time.Now().Format("2006-01-02 15:04:05")
-	fmt.Fprintf(multiWriter, "\n🚀 开始构建镜像 [%s]\n", startTime)
+	// 记录构建开始时间
+	buildStart := time.Now()
+	// 使用buildStart来记录当前的构建开始时间
+	fmt.Fprintf(multiWriter, "\n🚀 开始构建镜像 [%s]\n", buildStart.Format("2006-01-02 15:04:05"))
 	if err := cmd.Run(); err != nil {
 		fmt.Fprintf(multiWriter, "❌ 构建失败: %v\n", err)
 		return
 	}
 	fmt.Fprintln(multiWriter, "🎉 镜像构建完成")
-	fmt.Fprintf(multiWriter, "⏱️ 构建耗时: %s\n", time.Since(time.Now()).Round(time.Second))
+	// 用buildStart计算实际构建耗时
+	duration := time.Since(buildStart)
+	fmt.Fprintf(multiWriter, "⏱️ 构建耗时: %s\n", duration.Round(time.Second))
 }
