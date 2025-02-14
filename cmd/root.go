@@ -54,6 +54,7 @@ func init() {
 	buildCmd.Flags().BoolVarP(&conf.NoCache, "no-cache", "n", false, "不使用缓存构建镜像")
 	buildCmd.Flags().StringVarP(&conf.Tag, "tag", "t", "", "服务端标签")
 	buildCmd.Flags().BoolVarP(&conf.LocalFile, "local", "f", false, "使用本地服务端文件")
+	buildCmd.Flags().StringVarP(&conf.LocalFilePath, "local-file", "p", "", "本地服务端文件路径")
 }
 
 func Execute() {

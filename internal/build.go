@@ -3,6 +3,7 @@ package internal
 import (
 	"fmt"
 	"io"
+	"nightcord-build/utils"
 	"os"
 	"os/exec"
 	"strings"
@@ -33,21 +34,36 @@ func BuildImage(conf Config) {
 
 	fmt.Fprintln(multiWriter, "🚀 开始获取服务端文件")
 
-	// 检查本地文件模式
-	if conf.LocalFile {
-		if _, err := os.Stat("file/nightcord-server"); os.IsNotExist(err) {
-			fmt.Fprintf(multiWriter, "❌ 本地服务端文件不存在: file/nightcord-server\n")
-			return
-		}
+	if conf.LocalFilePath != "" {
 		fmt.Fprintln(multiWriter, "🔍 使用本地服务端文件")
-	} else {
-		fmt.Fprintln(multiWriter, "🌐 从GitHub获取服务端文件")
-		err := GetServerFile(conf.Tag, multiWriter)
-		if err != nil {
-			fmt.Fprintf(multiWriter, "❌ 获取服务端文件失败: %v\n", err)
+		fmt.Fprintln(multiWriter, "📂 复制本地服务端文件")
+		if err := os.MkdirAll("file", 0755); err != nil {
+			fmt.Fprintf(multiWriter, "创建文件目录失败: %v\n", err)
 			return
 		}
-		fmt.Fprintln(multiWriter, "🎉 获取服务端文件成功")
+		_ = os.Remove("file/nightcord-server") // 先尝试删除已有文件（忽略错误）
+		if err := utils.CopyFile(conf.LocalFilePath, "file/nightcord-server"); err != nil {
+			fmt.Fprintf(multiWriter, "❌ 复制本地服务端文件失败: %v\n", err)
+			return
+		}
+		fmt.Fprintln(multiWriter, "🎉 复制本地服务端文件成功")
+	} else {
+		// 检查本地文件模式
+		if conf.LocalFile {
+			if _, err := os.Stat("file/nightcord-server"); os.IsNotExist(err) {
+				fmt.Fprintf(multiWriter, "❌ 本地服务端文件不存在: file/nightcord-server\n")
+				return
+			}
+			fmt.Fprintln(multiWriter, "🔍 使用本地服务端文件")
+		} else {
+			fmt.Fprintln(multiWriter, "🌐 从GitHub获取服务端文件")
+			err := GetServerFile(conf.Tag, multiWriter)
+			if err != nil {
+				fmt.Fprintf(multiWriter, "❌ 获取服务端文件失败: %v\n", err)
+				return
+			}
+			fmt.Fprintln(multiWriter, "🎉 获取服务端文件成功")
+		}
 	}
 	GenerateDockerfile(multiWriter) // 生成Dockerfile
 
