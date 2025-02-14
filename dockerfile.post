@@ -1,0 +1,7 @@
+COPY ./file/nightcord-server /app/nightcord-server
+# 设置工作目录
+WORKDIR /app
+
+CMD ["./nightcord-server"]
+
+EXPOSE 2500/tcp
