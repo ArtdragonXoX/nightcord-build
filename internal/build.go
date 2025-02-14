@@ -31,6 +31,15 @@ func BuildImage(log bool, no_cache bool) {
 		multiWriter = io.MultiWriter(os.Stdout, logWriter) // 同时输出到控制台和日志文件
 	}
 
+	fmt.Fprintln(multiWriter, "🚀 开始获取服务端文件")
+
+	err := GetServerFile() // 获取服务端文件
+	if err != nil {
+		fmt.Fprintf(multiWriter, "❌ 获取服务端文件失败: %v\n", err)
+		return
+	}
+	fmt.Fprint(multiWriter, "🎉 获取服务端文件成功")
+
 	GenerateDockerfile(multiWriter) // 生成Dockerfile
 
 	fmt.Fprintf(multiWriter, "=== 开始构建 [%s] ===\n", startTime)
@@ -41,7 +50,7 @@ func BuildImage(log bool, no_cache bool) {
 	if no_cache {
 		args = append(args, "--no-cache")
 	}
-	fmt.Fprint(multiWriter, "运行命令 ", cmdStr+strings.Join(args, " "))
+	fmt.Fprint(multiWriter, "运行命令 ", cmdStr+" "+strings.Join(args, " "))
 	cmd := exec.Command(cmdStr, args...)
 	cmd.Stdout = multiWriter
 	cmd.Stderr = multiWriter
