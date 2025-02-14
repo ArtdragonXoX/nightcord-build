@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func BuildImage(log bool, no_cache bool) {
+func BuildImage(log bool, no_cache bool, tag string) {
 	var multiWriter io.Writer
 	multiWriter = io.MultiWriter(os.Stdout) // 默认输出到控制台
 	startTime := time.Now().Format("20060102-150405")
@@ -33,7 +33,7 @@ func BuildImage(log bool, no_cache bool) {
 
 	fmt.Fprintln(multiWriter, "🚀 开始获取服务端文件")
 
-	err := GetServerFile() // 获取服务端文件
+	err := GetServerFile(tag) // 获取服务端文件
 	if err != nil {
 		fmt.Fprintf(multiWriter, "❌ 获取服务端文件失败: %v\n", err)
 		return
