@@ -9,9 +9,10 @@ import (
 )
 
 var (
-	log      bool
-	no_cache bool
-	tag      string
+	log        bool
+	no_cache   bool
+	tag        string
+	local_file bool
 )
 
 var rootCmd = &cobra.Command{
@@ -34,7 +35,7 @@ var buildCmd = &cobra.Command{
 	Short: "Build Docker image",
 	Long:  `Build Docker image with logging and cache optimization`,
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.BuildImage(log, no_cache, tag)
+		internal.BuildImage(log, no_cache, tag, local_file)
 	},
 }
 
@@ -55,7 +56,7 @@ func init() {
 	buildCmd.Flags().BoolVarP(&log, "log", "l", false, "生成日志文件")
 	buildCmd.Flags().BoolVarP(&no_cache, "no-cache", "n", false, "不使用缓存构建镜像")
 	buildCmd.Flags().StringVarP(&tag, "tag", "t", "", "服务端标签")
-
+	buildCmd.Flags().BoolVarP(&local_file, "local", "f", false, "使用本地服务端文件")
 }
 
 func Execute() {

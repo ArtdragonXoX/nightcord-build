@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func BuildImage(log bool, no_cache bool, tag string) {
+func BuildImage(log bool, no_cache bool, tag string, local_file bool) {
 	var multiWriter io.Writer
 	multiWriter = io.MultiWriter(os.Stdout) // 默认输出到控制台
 	startTime := time.Now().Format("20060102-150405")
@@ -33,13 +33,22 @@ func BuildImage(log bool, no_cache bool, tag string) {
 
 	fmt.Fprintln(multiWriter, "🚀 开始获取服务端文件")
 
-	err := GetServerFile(tag) // 获取服务端文件
-	if err != nil {
-		fmt.Fprintf(multiWriter, "❌ 获取服务端文件失败: %v\n", err)
-		return
+	// 检查本地文件模式
+	if local_file {
+		if _, err := os.Stat("file/nightcord-server"); os.IsNotExist(err) {
+			fmt.Fprintf(multiWriter, "❌ 本地服务端文件不存在: file/nightcord-server\n")
+			return
+		}
+		fmt.Fprintln(multiWriter, "🔍 使用本地服务端文件")
+	} else {
+		fmt.Fprintln(multiWriter, "🌐 从GitHub获取服务端文件")
+		err := GetServerFile(tag, multiWriter)
+		if err != nil {
+			fmt.Fprintf(multiWriter, "❌ 获取服务端文件失败: %v\n", err)
+			return
+		}
+		fmt.Fprintln(multiWriter, "🎉 获取服务端文件成功")
 	}
-	fmt.Fprint(multiWriter, "🎉 获取服务端文件成功")
-
 	GenerateDockerfile(multiWriter) // 生成Dockerfile
 
 	fmt.Fprintf(multiWriter, "=== 开始构建 [%s] ===\n", startTime)
@@ -50,7 +59,7 @@ func BuildImage(log bool, no_cache bool, tag string) {
 	if no_cache {
 		args = append(args, "--no-cache")
 	}
-	fmt.Fprint(multiWriter, "运行命令 ", cmdStr+" "+strings.Join(args, " "))
+	fmt.Fprintln(multiWriter, "运行命令 ", cmdStr+" "+strings.Join(args, " "))
 	cmd := exec.Command(cmdStr, args...)
 	cmd.Stdout = multiWriter
 	cmd.Stderr = multiWriter
