@@ -9,12 +9,12 @@ import (
 	"time"
 )
 
-func BuildImage(log bool, no_cache bool, tag string, local_file bool) {
+func BuildImage(conf Config) {
 	var multiWriter io.Writer
 	multiWriter = io.MultiWriter(os.Stdout) // 默认输出到控制台
 	startTime := time.Now().Format("20060102-150405")
 
-	if log {
+	if conf.Log {
 		logFile := fmt.Sprintf("./logs/build-%s.log", startTime)
 		if err := os.MkdirAll("./logs", 0755); err != nil {
 			fmt.Printf("无法创建日志目录: %v\n", err)
@@ -34,7 +34,7 @@ func BuildImage(log bool, no_cache bool, tag string, local_file bool) {
 	fmt.Fprintln(multiWriter, "🚀 开始获取服务端文件")
 
 	// 检查本地文件模式
-	if local_file {
+	if conf.LocalFile {
 		if _, err := os.Stat("file/nightcord-server"); os.IsNotExist(err) {
 			fmt.Fprintf(multiWriter, "❌ 本地服务端文件不存在: file/nightcord-server\n")
 			return
@@ -42,7 +42,7 @@ func BuildImage(log bool, no_cache bool, tag string, local_file bool) {
 		fmt.Fprintln(multiWriter, "🔍 使用本地服务端文件")
 	} else {
 		fmt.Fprintln(multiWriter, "🌐 从GitHub获取服务端文件")
-		err := GetServerFile(tag, multiWriter)
+		err := GetServerFile(conf.Tag, multiWriter)
 		if err != nil {
 			fmt.Fprintf(multiWriter, "❌ 获取服务端文件失败: %v\n", err)
 			return
@@ -56,7 +56,7 @@ func BuildImage(log bool, no_cache bool, tag string, local_file bool) {
 	// 执行docker build命令
 	cmdStr := "docker"
 	args := []string{"build", "-t", "nightcord", "."}
-	if no_cache {
+	if conf.NoCache {
 		args = append(args, "--no-cache")
 	}
 	fmt.Fprintln(multiWriter, "运行命令 ", cmdStr+" "+strings.Join(args, " "))
