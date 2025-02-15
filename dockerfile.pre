@@ -1,23 +1,28 @@
-FROM ubuntu:20.04
+FROM debian:bullseye-slim
 
-ENV DEBIAN_FRONTEND=noninteractive
+# 设置环境变量（时区+非交互模式）
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=Asia/Shanghai \
+    LANG=zh_CN.UTF-8 \
+    LC_ALL=zh_CN.UTF-8
 
-ENV TZ=Asia/Shanghai
-
-RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list && \
-    sed -i "s@http://.*security.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list
-
-# 1. 安装 locales 包并生成中文语言环境
-RUN apt-get update && \
-    apt-get install -y locales \
-    wget && \
+# 配置阿里云镜像源并安装基础软件
+RUN echo "deb http://mirrors.aliyun.com/debian bullseye main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian bullseye-updates main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security bullseye-security main contrib non-free" >> /etc/apt/sources.list && \
+    apt-get update -y && \
+    # 安装必要软件包
+    apt-get install -y --no-install-recommends \
+        locales \
+        tzdata \
+        ca-certificates \
+        wget && \
+    # 配置中文环境
     sed -i '/zh_CN.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen zh_CN.UTF-8
-
-# 2. 设置默认语言环境为中文 UTF-8
-ENV LANG zh_CN.UTF-8
-ENV LC_ALL zh_CN.UTF-8
-
-RUN apt-get install -y tzdata && \
+    locale-gen zh_CN.UTF-8 && \
+    # 配置时区
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
-    echo "Asia/Shanghai" > /etc/timezone
+    echo "Asia/Shanghai" > /etc/timezone && \
+    # 清理缓存
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*

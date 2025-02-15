@@ -1,3 +1,5 @@
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 COPY ./file/nightcord-server /app/nightcord-server
 # 设置工作目录
 WORKDIR /app

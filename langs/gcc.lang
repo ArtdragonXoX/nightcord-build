@@ -1,16 +1,5 @@
-# 设置时区和构建环境
-ENV DEBIAN_FRONTEND=noninteractive \
-    TZ=Asia/Shanghai
-
-RUN apt-get update
-
-RUN set -ex; apt-get install -y \
-    gcc-9 \
-    g++-9 \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 \
-    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90 
-
-# 验证安装结果（包含版本信息和二进制位置）
-RUN set -ex; ls /usr/bin/gcc* && \
-    ls /usr/bin/g++* && \
-    gcc-9 --version | head -n1
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    build-essential
