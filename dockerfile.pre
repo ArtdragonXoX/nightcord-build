@@ -16,7 +16,8 @@ RUN echo "deb http://mirrors.aliyun.com/debian bullseye main contrib non-free" >
         locales \
         tzdata \
         ca-certificates \
-        wget && \
+        wget \
+        time && \
     # 配置中文环境
     sed -i '/zh_CN.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen zh_CN.UTF-8 && \
