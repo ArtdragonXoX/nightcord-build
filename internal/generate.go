@@ -2,19 +2,18 @@ package internal
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func GenerateDockerfile(w io.Writer) {
-	fmt.Fprintln(w, "🔍 开始生成Dockerfile")
+func GenerateDockerfile() {
+	fmt.Fprintln(multiWriter, "🔍 开始生成Dockerfile")
 	dockerContent := &strings.Builder{}
 
 	langFiles, err := filepath.Glob("langs/*.lang")
 	if err != nil {
-		fmt.Fprintf(w, "❌ 查找.lang文件失败: %v\n", err)
+		fmt.Fprintf(multiWriter, "❌ 查找.lang文件失败: %v\n", err)
 		return
 	}
 
@@ -29,7 +28,7 @@ func GenerateDockerfile(w io.Writer) {
 	for _, langFile := range langFiles {
 		content, err := os.ReadFile(langFile)
 		if err != nil {
-			fmt.Fprintf(w, "❌ 读取文件 %s 失败: %v\n", langFile, err)
+			fmt.Fprintf(multiWriter, "❌ 读取文件 %s 失败: %v\n", langFile, err)
 			continue
 		}
 
@@ -43,8 +42,8 @@ func GenerateDockerfile(w io.Writer) {
 
 	// 写入Dockerfile
 	if err := os.WriteFile("Dockerfile", []byte(dockerContent.String()), 0644); err != nil {
-		fmt.Fprintf(w, "❌ Dockerfile生成失败: %v\n", err)
+		fmt.Fprintf(multiWriter, "❌ Dockerfile生成失败: %v\n", err)
 		return
 	}
-	fmt.Fprintln(w, "✅ Dockerfile生成成功")
+	fmt.Fprintln(multiWriter, "✅ Dockerfile生成成功")
 }

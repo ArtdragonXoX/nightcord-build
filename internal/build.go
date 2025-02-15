@@ -2,7 +2,6 @@ package internal
 
 import (
 	"fmt"
-	"io"
 	"nightcord-build/utils"
 	"os"
 	"os/exec"
@@ -11,28 +10,8 @@ import (
 )
 
 func BuildImage(conf Config) {
-	var multiWriter io.Writer
-	multiWriter = io.MultiWriter(os.Stdout) // 默认输出到控制台
-	startTime := time.Now().Format("20060102-150405")
-
-	if conf.Log {
-		logFile := fmt.Sprintf("./logs/build-%s.log", startTime)
-		if err := os.MkdirAll("./logs", 0755); err != nil {
-			fmt.Printf("无法创建日志目录: %v\n", err)
-			return
-		}
-
-		logWriter, err := os.Create(logFile)
-		if err != nil {
-			fmt.Printf("创建日志文件失败: %v\n", err)
-			return
-		}
-		defer logWriter.Close()
-
-		multiWriter = io.MultiWriter(os.Stdout, logWriter) // 同时输出到控制台和日志文件
-	}
-
 	fmt.Fprintln(multiWriter, "🚀 开始获取服务端文件")
+	startTime := time.Now().Format("20060102-150405")
 
 	if conf.LocalFilePath != "" {
 		fmt.Fprintln(multiWriter, "🔍 使用本地服务端文件")
@@ -65,7 +44,7 @@ func BuildImage(conf Config) {
 			fmt.Fprintln(multiWriter, "🎉 获取服务端文件成功")
 		}
 	}
-	GenerateDockerfile(multiWriter) // 生成Dockerfile
+	GenerateDockerfile() // 生成Dockerfile
 
 	fmt.Fprintf(multiWriter, "=== 开始构建 [%s] ===\n", startTime)
 
