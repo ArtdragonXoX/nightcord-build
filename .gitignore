@@ -2,3 +2,4 @@ Dockerfile
 *.log
 file/
 build/
+repo.yaml
