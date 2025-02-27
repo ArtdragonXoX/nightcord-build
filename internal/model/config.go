@@ -1,4 +1,4 @@
-package internal
+package model
 
 type Config struct {
 	Tag           string
@@ -7,4 +7,6 @@ type Config struct {
 	Log           bool
 	LocalFilePath string
 	Dev           bool
+	Repo          string
+	Volume        string
 }
