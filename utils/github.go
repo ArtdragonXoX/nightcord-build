@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -104,4 +105,11 @@ func DownloadReleaseFiles(owner, repo, tag string, filenames []string, destDir s
 	}
 
 	return nil
+}
+
+func CloneRepo(repo, destDir string) error {
+	cmd := exec.Command("git", "clone", repo, destDir)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
