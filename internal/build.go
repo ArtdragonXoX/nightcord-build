@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"nightcord-build/internal/model"
 	"nightcord-build/utils"
 	"os"
 	"os/exec"
@@ -9,7 +10,7 @@ import (
 	"time"
 )
 
-func BuildImage(conf Config) {
+func BuildImage(conf model.Config) {
 	startTime := time.Now().Format("20060102-150405")
 
 	if conf.Dev {
@@ -21,12 +22,12 @@ func BuildImage(conf Config) {
 			fmt.Fprintln(multiWriter, "📂 复制本地服务端文件")
 			if err := os.MkdirAll("file", 0755); err != nil {
 				fmt.Fprintf(multiWriter, "创建文件目录失败: %v\n", err)
-				return
+				panic(err)
 			}
 			_ = os.Remove("file/nightcord-server") // 先尝试删除已有文件（忽略错误）
 			if err := utils.CopyFile(conf.LocalFilePath, "file/nightcord-server"); err != nil {
 				fmt.Fprintf(multiWriter, "❌ 复制本地服务端文件失败: %v\n", err)
-				return
+				panic(err)
 			}
 			fmt.Fprintln(multiWriter, "🎉 复制本地服务端文件成功")
 		} else {
@@ -34,7 +35,7 @@ func BuildImage(conf Config) {
 			if conf.LocalFile {
 				if _, err := os.Stat("file/nightcord-server"); os.IsNotExist(err) {
 					fmt.Fprintf(multiWriter, "❌ 本地服务端文件不存在: file/nightcord-server\n")
-					return
+					panic(err)
 				}
 				fmt.Fprintln(multiWriter, "🔍 使用本地服务端文件")
 			} else {
@@ -42,7 +43,7 @@ func BuildImage(conf Config) {
 				err := GetServerFile(conf.Tag, multiWriter)
 				if err != nil {
 					fmt.Fprintf(multiWriter, "❌ 获取服务端文件失败: %v\n", err)
-					return
+					panic(err)
 				}
 				fmt.Fprintln(multiWriter, "🎉 获取服务端文件成功")
 			}
@@ -75,7 +76,7 @@ func BuildImage(conf Config) {
 	fmt.Fprintf(multiWriter, "\n🚀 开始构建镜像 [%s]\n", buildStart.Format("2006-01-02 15:04:05"))
 	if err := cmd.Run(); err != nil {
 		fmt.Fprintf(multiWriter, "❌ 构建失败: %v\n", err)
-		return
+		panic(err)
 	}
 	fmt.Fprintln(multiWriter, "🎉 镜像构建完成")
 	// 用buildStart计算实际构建耗时，并精确到三位小数

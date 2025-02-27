@@ -3,13 +3,14 @@ package cmd
 import (
 	"fmt"
 	"nightcord-build/internal"
+	"nightcord-build/internal/model"
 	"os"
 
 	"github.com/spf13/cobra"
 )
 
 var (
-	conf = internal.Config{}
+	conf = model.Config{}
 )
 
 var rootCmd = &cobra.Command{
@@ -57,6 +58,7 @@ func init() {
 
 	makeCmd.Flags().BoolVarP(&conf.Log, "log", "l", false, "生成日志文件")
 	makeCmd.Flags().BoolVarP(&conf.Dev, "dev", "d", false, "搭建开发环境")
+	makeCmd.Flags().StringVarP(&conf.Repo, "repo", "r", "", "仓库地址")
 
 	buildCmd.Flags().BoolVarP(&conf.Log, "log", "l", false, "生成日志文件")
 	buildCmd.Flags().BoolVarP(&conf.NoCache, "no-cache", "n", false, "不使用缓存构建镜像")
@@ -64,6 +66,7 @@ func init() {
 	buildCmd.Flags().BoolVarP(&conf.LocalFile, "local", "f", false, "使用本地服务端文件")
 	buildCmd.Flags().StringVarP(&conf.LocalFilePath, "local-file", "p", "", "本地服务端文件路径")
 	buildCmd.Flags().BoolVarP(&conf.Dev, "dev", "d", false, "搭建开发环境")
+	buildCmd.Flags().StringVarP(&conf.Repo, "repo", "r", "", "仓库地址")
 
 	runCmd.Flags().BoolVarP(&conf.Log, "log", "l", false, "生成日志文件")
 	runCmd.Flags().BoolVarP(&conf.NoCache, "no-cache", "n", false, "不使用缓存构建镜像")
@@ -71,6 +74,8 @@ func init() {
 	runCmd.Flags().BoolVarP(&conf.LocalFile, "local", "f", false, "使用本地服务端文件")
 	runCmd.Flags().StringVarP(&conf.LocalFilePath, "local-file", "p", "", "本地服务端文件路径")
 	runCmd.Flags().BoolVarP(&conf.Dev, "dev", "d", false, "搭建开发环境")
+	runCmd.Flags().StringVarP(&conf.Repo, "repo", "r", "", "仓库地址")
+	runCmd.Flags().StringVarP(&conf.Volume, "volume", "v", "", "挂载卷")
 }
 
 func Execute() {
