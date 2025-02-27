@@ -3,3 +3,4 @@ Dockerfile
 file/
 build/
 repo.yaml
+id_rsa
