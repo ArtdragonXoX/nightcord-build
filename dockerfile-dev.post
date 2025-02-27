@@ -1,4 +1,4 @@
-RUN wget https://golang.google.cn/dl/go1.24.0.linux-amd64.tar.gz
+RUN wget --tries=5 https://golang.google.cn/dl/go1.24.0.linux-amd64.tar.gz
 RUN tar -xvf go1.24.0.linux-amd64.tar.gz
 RUN rm go1.24.0.linux-amd64.tar.gz
 RUN mv go /usr/local
@@ -11,9 +11,5 @@ ENV GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
 RUN apt-get install -y git
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-
-# WORKDIR /home
-# RUN git clone https://github.com/ArtdragonXoX/nightcord-server.git
 
 CMD ["/bin/bash"]
