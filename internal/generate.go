@@ -7,7 +7,10 @@ import (
 	"strings"
 )
 
-func GenerateDockerfile() {
+func GenerateDockerfile(conf Config) {
+	if conf.Dev {
+		fmt.Fprintln(multiWriter, "构建nightcord-server开发环境Dockerfile")
+	}
 	fmt.Fprintln(multiWriter, "🔍 开始生成Dockerfile")
 	dockerContent := &strings.Builder{}
 
@@ -18,8 +21,15 @@ func GenerateDockerfile() {
 	}
 
 	// 读取pre/post文件
-	preContent, _ := os.ReadFile("dockerfile.pre")
-	postContent, _ := os.ReadFile("dockerfile.post")
+	var preContent []byte
+	var postContent []byte
+	if conf.Dev {
+		preContent, _ = os.ReadFile("dockerfile-dev.pre")
+		postContent, _ = os.ReadFile("dockerfile-dev.post")
+	} else {
+		preContent, _ = os.ReadFile("dockerfile.pre")
+		postContent, _ = os.ReadFile("dockerfile.post")
+	}
 
 	// 多阶段构建模板
 	dockerContent.WriteString("## 构建阶段\n")

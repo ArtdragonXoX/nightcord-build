@@ -28,7 +28,7 @@ var makeCmd = &cobra.Command{
 	Short: "Generate Dockerfile",
 	Long:  `Generate Dockerfile from template fragments`,
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.GenerateDockerfile()
+		internal.GenerateDockerfile(conf)
 	},
 }
 
@@ -56,16 +56,21 @@ func init() {
 	rootCmd.AddCommand(runCmd)
 
 	makeCmd.Flags().BoolVarP(&conf.Log, "log", "l", false, "生成日志文件")
+	makeCmd.Flags().BoolVarP(&conf.Dev, "dev", "d", false, "搭建开发环境")
+
 	buildCmd.Flags().BoolVarP(&conf.Log, "log", "l", false, "生成日志文件")
 	buildCmd.Flags().BoolVarP(&conf.NoCache, "no-cache", "n", false, "不使用缓存构建镜像")
 	buildCmd.Flags().StringVarP(&conf.Tag, "tag", "t", "", "服务端标签")
 	buildCmd.Flags().BoolVarP(&conf.LocalFile, "local", "f", false, "使用本地服务端文件")
 	buildCmd.Flags().StringVarP(&conf.LocalFilePath, "local-file", "p", "", "本地服务端文件路径")
+	buildCmd.Flags().BoolVarP(&conf.Dev, "dev", "d", false, "搭建开发环境")
+
 	runCmd.Flags().BoolVarP(&conf.Log, "log", "l", false, "生成日志文件")
 	runCmd.Flags().BoolVarP(&conf.NoCache, "no-cache", "n", false, "不使用缓存构建镜像")
 	runCmd.Flags().StringVarP(&conf.Tag, "tag", "t", "", "服务端标签")
 	runCmd.Flags().BoolVarP(&conf.LocalFile, "local", "f", false, "使用本地服务端文件")
 	runCmd.Flags().StringVarP(&conf.LocalFilePath, "local-file", "p", "", "本地服务端文件路径")
+	runCmd.Flags().BoolVarP(&conf.Dev, "dev", "d", false, "搭建开发环境")
 }
 
 func Execute() {

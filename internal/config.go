@@ -6,4 +6,5 @@ type Config struct {
 	NoCache       bool
 	Log           bool
 	LocalFilePath string
+	Dev           bool
 }
