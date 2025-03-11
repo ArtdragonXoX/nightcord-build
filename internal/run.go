@@ -12,7 +12,11 @@ import (
 func Run(conf model.Config) {
 	if conf.Dev {
 		fmt.Fprintln(multiWriter, "构建nightcord-server开发环境容器")
-		BuildImage(conf)
+		if !conf.JumpBuild {
+			BuildImage(conf)
+		} else {
+			fmt.Fprintln(multiWriter, "跳过构建镜像...")
+		}
 		fmt.Fprintln(multiWriter, "🚀 正在启动容器...")
 		cmdStr := "docker"
 		args := []string{"run", "--name", "nightcord-dev"}
@@ -52,7 +56,11 @@ func Run(conf model.Config) {
 			fmt.Fprintf(multiWriter, "❌ docker-compose.yaml不存在，请先创建docker-compose.yaml文件\n")
 			panic(err)
 		}
-		BuildImage(conf)
+		if !conf.JumpBuild {
+			BuildImage(conf)
+		} else {
+			fmt.Fprintln(multiWriter, "跳过构建镜像...")
+		}
 		cmdStr := "docker-compose"
 		args := []string{"up", "-d"}
 		fmt.Fprintf(multiWriter, "🚀 正在启动容器...\n")

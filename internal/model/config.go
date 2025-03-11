@@ -9,4 +9,5 @@ type Config struct {
 	Dev           bool
 	Repo          string
 	Volume        string
+	JumpBuild     bool
 }

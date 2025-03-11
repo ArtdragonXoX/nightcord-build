@@ -76,6 +76,7 @@ func init() {
 	runCmd.Flags().BoolVarP(&conf.Dev, "dev", "d", false, "搭建开发环境")
 	runCmd.Flags().StringVarP(&conf.Repo, "repo", "r", "", "仓库地址")
 	runCmd.Flags().StringVarP(&conf.Volume, "volume", "v", "", "挂载卷")
+	runCmd.Flags().BoolVarP(&conf.JumpBuild, "jump-build", "j", false, "跳过构建镜像步骤")
 }
 
 func Execute() {
