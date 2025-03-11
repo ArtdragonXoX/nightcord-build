@@ -6,7 +6,7 @@ RUN mv go /usr/local
 ENV GOROOT=/usr/local/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 ENV GOPATH=/go
-ENV GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
+ENV GOPROXY=https://goproxy.cn,direct
 
 RUN apt-get install -y git
 RUN apt-get clean && \
