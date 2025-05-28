@@ -1,6 +1,6 @@
-RUN wget --tries=5 https://golang.google.cn/dl/go1.24.0.linux-amd64.tar.gz
-RUN tar -xvf go1.24.0.linux-amd64.tar.gz
-RUN rm go1.24.0.linux-amd64.tar.gz
+RUN wget --tries=5 https://golang.google.cn/dl/go1.24.3.linux-amd64.tar.gz
+RUN tar -xvf go1.24.3.linux-amd64.tar.gz
+RUN rm go1.24.3.linux-amd64.tar.gz
 RUN mv go /usr/local
 
 ENV GOROOT=/usr/local/go
@@ -12,4 +12,23 @@ RUN apt-get install -y git
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-CMD ["/bin/bash"]
+# Install OpenSSH server
+RUN apt-get update && apt-get install -y openssh-server
+
+# Configure SSH
+RUN mkdir -p /var/run/sshd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+RUN sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# Set root password (replace 'yourpassword' with a strong password or use an ARG)
+ARG SSH_ROOT_PASSWORD=root
+RUN echo "root:${SSH_ROOT_PASSWORD}" | chpasswd
+
+# Define a default SSH port and allow it to be overridden
+ARG SSH_PORT=2522
+RUN sed -i "s/#Port 22/Port ${SSH_PORT}/" /etc/ssh/sshd_config
+EXPOSE ${SSH_PORT}
+
+# Start SSH server and bash
+CMD service ssh start && /bin/bash
